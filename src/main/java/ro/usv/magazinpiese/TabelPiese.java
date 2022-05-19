@@ -92,9 +92,9 @@ public class TabelPiese implements Initializable {
 
         }
         public  void addItem(ActionEvent e){
-                if(txtMontare.getText()==""||txtDenumire.getText()==""||txtMasini.getText()==""||txtMarca.getText()=="")
-                        throw new IllegalArgumentException("Completati toate casetele text");
-                        try{
+
+                        try{ if(txtMontare.getText()==""||txtDenumire.getText()==""||txtMasini.getText()==""||txtMarca.getText()=="")
+                                throw new IllegalArgumentException("Completati toate casetele text");
                                 Class.forName("oracle.jdbc.driver.OracleDriver").newInstance();
                                 Alert a = new Alert(Alert.AlertType.NONE);
                                 conn = DriverManager.getConnection(jdbcURL,user,passwd);
@@ -156,7 +156,8 @@ public class TabelPiese implements Initializable {
                                 System.out.println(ex.getMessage());}
         }
         public void saveItem(ActionEvent e){
-                        try{
+                        try{    if(txtMontare.getText()==""||txtDenumire.getText()==""||txtMasini.getText()==""||txtMarca.getText()=="")
+                                throw new IllegalArgumentException("Completati toate casetele text");
                                 Class.forName("oracle.jdbc.driver.OracleDriver").newInstance();
                                 Alert a = new Alert(Alert.AlertType.NONE);
                                 conn = DriverManager.getConnection(jdbcURL,user,passwd);
