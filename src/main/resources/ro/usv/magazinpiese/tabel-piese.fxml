@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="607.0" prefWidth="992.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ro.usv.magazinpiese.TabelPiese">
+   <children>
+      <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#goBack" stylesheets="@application.css" text="Înapoi" />
+      <TableView fx:id="tableView" layoutX="340.0" prefHeight="609.0" prefWidth="653.0" stylesheets="@application.css">
+        <columns>
+          <TableColumn fx:id="PiesaId" prefWidth="44.0" text="Id" />
+          <TableColumn fx:id="Denumire" prefWidth="114.0" text="Denumire" />
+            <TableColumn fx:id="Marca" prefWidth="107.0" text="Marca" />
+            <TableColumn fx:id="parteMontare" prefWidth="103.0" text="Parte Montare" />
+            <TableColumn fx:id="masiniCompatibile" prefWidth="185.0" text="Masini Compatibile" />
+            <TableColumn fx:id="data" prefWidth="99.0" text="Data Adaugarii" />
+        </columns>
+      </TableView>
+      <TextField fx:id="txtDenumire" layoutX="24.0" layoutY="211.0" prefHeight="25.0" prefWidth="284.0" stylesheets="@application.css" />
+      <TextField fx:id="txtMarca" layoutX="24.0" layoutY="271.0" prefHeight="25.0" prefWidth="284.0" stylesheets="@application.css" />
+      <TextField fx:id="txtMontare" layoutX="24.0" layoutY="331.0" prefHeight="25.0" prefWidth="284.0" stylesheets="@application.css" />
+      <TextField fx:id="txtMasini" layoutX="24.0" layoutY="398.0" prefHeight="25.0" prefWidth="284.0" stylesheets="@application.css" />
+      <Label layoutX="24.0" layoutY="186.0" stylesheets="@application.css" text="Denumire" />
+      <Label layoutX="24.0" layoutY="247.0" stylesheets="@application.css" text="Marca" />
+      <Label layoutX="24.0" layoutY="305.0" stylesheets="@application.css" text="Parte Montare" />
+      <Label layoutX="24.0" layoutY="372.0" stylesheets="@application.css" text="Masini Compatibile" />
+      <Label layoutX="24.0" layoutY="138.0" stylesheets="@application.css" text="Adaugare Piesă">
+         <font>
+            <Font name="System Bold" size="21.0" />
+         </font>
+      </Label>
+      <Button layoutX="41.0" layoutY="475.0" mnemonicParsing="false" onAction="#addItem" prefHeight="46.0" prefWidth="102.0" stylesheets="@application.css" text="Adaugă" />
+      <Button layoutX="177.0" layoutY="475.0" mnemonicParsing="false" onAction="#deleteSelected" prefHeight="46.0" prefWidth="102.0" stylesheets="@application.css" text="Șterge" />
+      <Button layoutX="40.0" layoutY="533.0" mnemonicParsing="false" onAction="#selectedItem" stylesheets="@application.css" text="Editează" />
+      <Button layoutX="175.0" layoutY="533.0" mnemonicParsing="false" onAction="#saveItem" stylesheets="@application.css" text="Salvează" />
+   </children>
+</AnchorPane>
