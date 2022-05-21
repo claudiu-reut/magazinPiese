@@ -1,8 +1,11 @@
 package ro.usv.magazinpiese;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+
 public class Piesa {
     private int id;
-    private String denumire;
+    private String denumire ;
     private String marca;
     private String parteMontare;
     private String masiniCompatibile;
@@ -18,12 +21,13 @@ public class Piesa {
     }
     public Piesa() {
         this.id = 0;
-        this.denumire = "";
         this.marca = "";
+        this.denumire="";
         this.parteMontare = "";
         this.masiniCompatibile = "";
         this.data = "";
     }
+
     public int getId() {
         return id;
     }
