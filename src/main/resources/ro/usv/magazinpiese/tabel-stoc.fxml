@@ -45,7 +45,7 @@
       </Label>
       <Button layoutX="31.0" layoutY="419.0" mnemonicParsing="false" onAction="#addItem" prefHeight="46.0" prefWidth="105.0" stylesheets="@application.css" text="Adaugă" />
       <Button layoutX="185.0" layoutY="419.0" mnemonicParsing="false" onAction="#deleteSelected" prefHeight="46.0" prefWidth="105.0" stylesheets="@application.css" text="Șterge" />
-      <Button layoutX="29.0" layoutY="498.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="105.0" stylesheets="@application.css" text="Editează" />
-      <Button layoutX="185.0" layoutY="498.0" mnemonicParsing="false" prefHeight="46.0" prefWidth="105.0" stylesheets="@application.css" text="Salvează" />
+      <Button layoutX="29.0" layoutY="498.0" mnemonicParsing="false" onAction="#selectedItem" prefHeight="46.0" prefWidth="105.0" stylesheets="@application.css" text="Editează" />
+      <Button layoutX="185.0" layoutY="498.0" mnemonicParsing="false" onAction="#saveItem" prefHeight="46.0" prefWidth="105.0" stylesheets="@application.css" text="Salvează" />
    </children>
 </AnchorPane>

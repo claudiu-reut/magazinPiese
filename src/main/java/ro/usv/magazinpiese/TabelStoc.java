@@ -188,6 +188,25 @@ public class TabelStoc implements Initializable {
         return stocuri;
 
     }
+
+    public void selectedItem(ActionEvent e){
+        try {
+
+
+            Stoc s = stocTableView.getSelectionModel().getSelectedItem();
+            if(s!=null){
+               txtPret.setText(s.getPret().toString());
+               txtBuc.setText(s.getBucati().toString());
+               String str=" "+s.getId()+" "+s.getDenumire()+" "+s.getMarca()+" ";
+               cmbPiese.getSelectionModel().select(str);
+               str="[ "+s.getDepoId()+" "+s.getOras()+" "+s.getJudet()+" ]";
+               cmbDepo.getSelectionModel().select(str);
+            }
+        }catch (Exception ex){ Alert a = new Alert(Alert.AlertType.ERROR);
+            a.setContentText(ex.getMessage());
+            a.show();
+            System.out.println(ex.getMessage());}
+    }
     public  void addItem(ActionEvent e) {
         getSelectedDepoId();
 
@@ -236,6 +255,42 @@ public class TabelStoc implements Initializable {
         }
 
 
+    }
+    public void saveItem(ActionEvent e){
+        try{
+            if(txtBuc.getText()==""||txtPret.getText()==""||cmbDepo.getSelectionModel().getSelectedItem()==null ||cmbPiese.getSelectionModel().getSelectedItem()==null)
+                throw new IllegalArgumentException("Completati toate casetele text");
+            Pattern pattern = Pattern.compile("-?\\d+(\\.\\d+)?");
+            Pattern pattern2 = Pattern.compile("[-+]?[0-9]*\\.?[0-9]+");
+            if(!pattern.matcher(txtBuc.getText()).matches())
+                throw new IllegalArgumentException("Campul bucati trebuie sa fie un numar intreg");
+            if(!pattern2.matcher(txtPret.getText()).matches())
+                throw new IllegalArgumentException("Campul pret trebuie sa contina un numar intreg sau cu virgula flotanta");
+            Class.forName("oracle.jdbc.driver.OracleDriver").newInstance();
+            Alert a = new Alert(Alert.AlertType.NONE);
+            conn = DriverManager.getConnection(jdbcURL,user,passwd);
+            Stoc s = stocTableView.getSelectionModel().getSelectedItem();
+            String sqlCommand = "update stoc_3132a_rc ";
+            sqlCommand+="SET pret="+txtPret.getText()+", bucati="+txtBuc.getText();
+            sqlCommand+=" where piesa_id="+s.getId()+" and depozit_id="+s.getDepoId();
+            stmt = conn.createStatement();
+            System.out.println(sqlCommand);
+            int rezult = stmt.executeUpdate(sqlCommand);
+
+
+            if(rezult > 0)
+            {      stocTableView.getItems().setAll(parseStocList());
+            }
+            else
+            {
+                throw new RuntimeException("Itemul nu a fost sters");
+            }
+
+
+        }catch (Exception ex){ Alert a = new Alert(Alert.AlertType.ERROR);
+            a.setContentText(ex.getMessage());
+            a.show();
+            System.out.println(ex.getMessage());}
     }
     public void deleteSelected(ActionEvent e){
         try{
