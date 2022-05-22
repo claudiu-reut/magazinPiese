@@ -8,9 +8,14 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class Application extends javafx.application.Application {
     private Stage stage;
+    static final ClassLoader loader = Application.class.getClassLoader();
+
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(Application.class.getResource("main-menu.fxml"));
@@ -21,7 +26,12 @@ public class Application extends javafx.application.Application {
         scene.getStylesheets().add(css);
 
         stage.setTitle("Magazin Piese Auto");
-        stage.getIcons().add(new Image("G:\\labbd\\MagazinPiese\\src\\main\\resources\\ro\\usv\\magazinpiese\\auto-parts.png"));
+        loader.getResource("ro/usv/magazinpiese/auto-parts.png");
+        //URL url=getClass().getResource("ro/usv/magazinpiese/auto-parts.png");
+        Path p = Paths.get("src/main/resources/ro/usv/magazinpiese/auto-parts.png");
+
+       // System.out.println(p.toFile().getAbsolutePath());
+        stage.getIcons().add(new Image(p.toFile().getAbsolutePath()));
         stage.setScene(scene);
         stage.show();
         this.stage=stage;
