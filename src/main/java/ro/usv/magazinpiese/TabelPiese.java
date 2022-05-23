@@ -10,6 +10,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
@@ -34,6 +35,7 @@ public class TabelPiese implements Initializable {
         @FXML private TableColumn<Piesa, String> parteMontare;
         @FXML private TableColumn<Piesa, String> masiniCompatibile;
         @FXML private TableColumn<Piesa, String> data;
+        @FXML private TableColumn<Piesa, Boolean> activated;
         @FXML private TextField txtMarca;
         @FXML private TextField txtDenumire;
         @FXML private TextField txtMontare;
@@ -46,12 +48,21 @@ public class TabelPiese implements Initializable {
         String passwd ="oracletest";
                 @Override
                 public void initialize(URL location, ResourceBundle resources) {
+                        var selecteAllCheckBox = new CheckBox();
+                        selecteAllCheckBox.setOnAction(
+                                event -> {
+                                        event.consume();
+                                        tableView.getItems().forEach(item -> item.setEnabled(selecteAllCheckBox.isSelected()));
+                                });
+                       activated.setCellFactory(CheckBoxTableCell.forTableColumn(activated));
+
                         PiesaId.setCellValueFactory(new PropertyValueFactory<Piesa, Integer>("id"));
                         Denumire.setCellValueFactory(new PropertyValueFactory<Piesa, String>("Denumire"));
                         Marca.setCellValueFactory(new PropertyValueFactory<Piesa, String>("Marca"));
                         parteMontare.setCellValueFactory(new PropertyValueFactory<Piesa, String>("parteMontare"));
                         masiniCompatibile.setCellValueFactory(new PropertyValueFactory<Piesa, String>("masiniCompatibile"));
                         data.setCellValueFactory(new PropertyValueFactory<Piesa, String>("data"));
+                        activated.setCellValueFactory(celldata->celldata.getValue().enabledProperty());
                         tableView.getItems().setAll(parsePieseList());
                 }
 
@@ -78,6 +89,7 @@ public class TabelPiese implements Initializable {
                                 piesa.setMarca(rs.getString("MARCA"));
                                 piesa.setParteMontare(rs.getString("PARTE_MONTARE").toString());
                                 piesa.setMasiniCompatibile(rs.getString("MASINI_COMPATIBILE"));
+                                piesa.setEnabled(true);
                                 piese.add(piesa);
                         }
                         //prelucrare rezultat
@@ -183,6 +195,19 @@ public class TabelPiese implements Initializable {
                                 a.setContentText(ex.getMessage());
                                 a.show();
                                 System.out.println(ex.getMessage());}
+        }
+        public void deactivateItem(ActionEvent e){
+                        try{
+
+                                Piesa piesa=tableView.getSelectionModel().getSelectedItem();
+                                piesa.setEnabled(!piesa.isEnabled());
+                                activated.setCellValueFactory(celldata->celldata.getValue().enabledProperty());
+                        }catch (Exception ex){
+                                Alert a = new Alert(Alert.AlertType.ERROR);
+                                a.setContentText(ex.getMessage());
+                                a.show();
+                                System.out.println(ex.getMessage());
+                        }
         }
         public void selectedItem(ActionEvent e){
                 try {

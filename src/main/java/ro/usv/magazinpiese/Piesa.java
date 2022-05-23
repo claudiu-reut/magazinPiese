@@ -1,5 +1,7 @@
 package ro.usv.magazinpiese;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
@@ -10,6 +12,7 @@ public class Piesa {
     private String parteMontare;
     private String masiniCompatibile;
     private String data;
+    private BooleanProperty enabled=new SimpleBooleanProperty();;
 
     public Piesa(int id, String denumire, String marca, String parteMontare, String masiniCompatibile, String data) {
         this.id = id;
@@ -18,6 +21,7 @@ public class Piesa {
         this.parteMontare = parteMontare;
         this.masiniCompatibile = masiniCompatibile;
         this.data = data;
+        this.enabled.set(true);
     }
     public Piesa() {
         this.id = 0;
@@ -26,6 +30,7 @@ public class Piesa {
         this.parteMontare = "";
         this.masiniCompatibile = "";
         this.data = "";
+        this.enabled.set(true);
     }
 
     public int getId() {
@@ -48,6 +53,14 @@ public class Piesa {
         return marca;
     }
 
+    public boolean isEnabled() {
+        return enabled.get();
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled.set( enabled);
+    }
+
     public void setMarca(String marca) {
         this.marca = marca;
     }
@@ -67,7 +80,9 @@ public class Piesa {
     public void setMasiniCompatibile(String masiniCompatibile) {
         this.masiniCompatibile = masiniCompatibile;
     }
-
+    public BooleanProperty enabledProperty() {
+        return enabled ;
+    }
     public String getData() {
         return data;
     }
