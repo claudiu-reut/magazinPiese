@@ -12,14 +12,19 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.*;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class TabelPiese implements Initializable {
@@ -128,11 +133,16 @@ public class TabelPiese implements Initializable {
                                 sqlCommand +="SECV_RC.NEXTVAL, '" + name + "', '" +  txtMarca.getText().toUpperCase()+ "', '" + montare +"', '"+txtMasini.getText().toUpperCase()+"'"+",1)";
                                 System.out.println(sqlCommand);
                                 int rezult = stmt.executeUpdate(sqlCommand);
-
+                                Path p = Paths.get("src/main/resources/ro/usv/magazinpiese/done.png");
+                                Image image = new Image(p.toFile().getAbsolutePath());
+                                ImageView imageView = new ImageView(image);
+                                imageView.fitHeightProperty().set(50);
+                                imageView.fitWidthProperty().set(50);
 
                                 if(rezult > 0)
                                 {       a.setAlertType(Alert.AlertType.CONFIRMATION);
                                         a.setContentText("Item adaugat cu succes.");
+                                        a.setGraphic(imageView);
                                         a.show();
                                 }
                                 else
@@ -155,21 +165,41 @@ public class TabelPiese implements Initializable {
         public void deleteSelected(ActionEvent e){
                         try{
                                 Class.forName("oracle.jdbc.driver.OracleDriver").newInstance();
-                                Alert a = new Alert(Alert.AlertType.NONE);
-                                conn = DriverManager.getConnection(jdbcURL,user,passwd);
+                                Alert alert = new Alert(Alert.AlertType.WARNING);
+                                alert.setTitle("Atenție");
                                 Piesa p = tableView.getSelectionModel().getSelectedItem();
-                                String sqlCommand = "delete from piesa_rc where piesa_id="+p.getId();
-                                stmt = conn.createStatement();
-                                int rezult = stmt.executeUpdate(sqlCommand);
+                                alert.setHeaderText("Doriti sa stergeti permanent piesa "+p.getId()+" "+p.getDenumire()+" "+p.getMarca() +"?");
+                                alert.setContentText("Odată ștearsă înregistrarea nu poate fi recuperată.\nAceastă acțiune va determina o ștergere cascadată pentru celelalte tabele în care se găsește înregistrarea.");
 
+                                ButtonType yesButton = new ButtonType("Da");
+                                ButtonType cancelButton = new ButtonType("Nu", ButtonBar.ButtonData.CANCEL_CLOSE);
 
-                                if(rezult > 0)
-                                {      tableView.getItems().setAll(parsePieseList());
-                                }
-                                else
+                                alert.getButtonTypes().setAll(yesButton, cancelButton);
+                                conn = DriverManager.getConnection(jdbcURL,user,passwd);
+
+                                Optional<ButtonType> result = alert.showAndWait();
+                                if(result.get() == yesButton)
                                 {
-                                        throw new RuntimeException("Itemul nu a fost sters");
+
+                                        String sqlCommand = "delete from piesa_rc where piesa_id="+p.getId();
+                                        stmt = conn.createStatement();
+                                        int rezult = stmt.executeUpdate(sqlCommand);
+                                        if(rezult > 0)
+                                        {      tableView.getItems().setAll(parsePieseList());
+                                        }
+                                        else
+                                        {
+                                                throw new RuntimeException("Itemul nu a fost sters");
+                                        }
                                 }
+                                else if(result.get() == cancelButton)
+                                {
+
+                                }
+
+
+
+
 
 
                         }catch (Exception ex){Alert a = new Alert(Alert.AlertType.ERROR);

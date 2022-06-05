@@ -12,16 +12,21 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import ro.usv.magazinpiese.Depozit;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.regex.Pattern;
 
@@ -132,20 +137,41 @@ public class TabelDepozit implements Initializable {
         try{
             Class.forName("oracle.jdbc.driver.OracleDriver").newInstance();
             Alert a = new Alert(Alert.AlertType.NONE);
-            conn = DriverManager.getConnection(jdbcURL,user,passwd);
+            Alert alert = new Alert(Alert.AlertType.WARNING);
+            alert.setTitle("Atenție");
             Depozit d = depozitTableView.getSelectionModel().getSelectedItem();
-            String sqlCommand = "delete from depozite_rc where depozit_id="+d.getId();
-            stmt = conn.createStatement();
-            int rezult = stmt.executeUpdate(sqlCommand);
+            alert.setHeaderText("Doriti sa stergeti permanent depozitul "+d.getId()+" "+d.getOras()+" "+d.getJudet() +"?");
+            alert.setContentText("Odată ștearsă înregistrarea nu poate fi recuperată.\nAceastă acțiune va determina o ștergere cascadată pentru celelalte tabele în care se găsește înregistrarea.");
+
+            ButtonType yesButton = new ButtonType("Da");
+            ButtonType cancelButton = new ButtonType("Nu", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+            alert.getButtonTypes().setAll(yesButton, cancelButton);
 
 
-            if(rezult > 0)
-            {      depozitTableView.getItems().setAll(parseDepoList());
+            Optional<ButtonType> result = alert.showAndWait();
+            conn = DriverManager.getConnection(jdbcURL,user,passwd);
+
+
+            if(result.get() == yesButton)
+            {    String sqlCommand = "delete from depozite_rc where depozit_id="+d.getId();
+                stmt = conn.createStatement();
+                int rezult = stmt.executeUpdate(sqlCommand);
+                if(rezult > 0)
+                {      depozitTableView.getItems().setAll(parseDepoList());
+                }
+                else
+                {
+                    throw new RuntimeException("Itemul nu a fost sters");
+                }
             }
-            else
+
+            else if(result.get() == cancelButton)
             {
-                throw new RuntimeException("Itemul nu a fost sters");
+
             }
+
+
 
 
         }catch (Exception ex){Alert a = new Alert(Alert.AlertType.ERROR);
@@ -220,7 +246,11 @@ public class TabelDepozit implements Initializable {
             Class.forName("oracle.jdbc.driver.OracleDriver").newInstance();
             Alert a = new Alert(Alert.AlertType.NONE);
             conn = DriverManager.getConnection(jdbcURL,user,passwd);
-
+            Path p = Paths.get("src/main/resources/ro/usv/magazinpiese/done.png");
+            Image image = new Image(p.toFile().getAbsolutePath());
+            ImageView imageView = new ImageView(image);
+            imageView.fitHeightProperty().set(50);
+            imageView.fitWidthProperty().set(50);
             stmt = conn.createStatement();
 
 
@@ -233,6 +263,7 @@ public class TabelDepozit implements Initializable {
             if(rezult > 0)
             {       a.setAlertType(Alert.AlertType.CONFIRMATION);
                 a.setContentText("Item adaugat cu succes.");
+                a.setGraphic(imageView);
                 a.show();
             }
             else

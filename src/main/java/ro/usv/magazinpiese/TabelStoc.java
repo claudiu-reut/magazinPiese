@@ -16,9 +16,13 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -242,10 +246,15 @@ public class TabelStoc implements Initializable {
             System.out.println(sqlCommand);
             int rezult = stmt.executeUpdate(sqlCommand);
 
-
+            Path p = Paths.get("src/main/resources/ro/usv/magazinpiese/done.png");
+            Image image = new Image(p.toFile().getAbsolutePath());
+            ImageView imageView = new ImageView(image);
+            imageView.fitHeightProperty().set(50);
+            imageView.fitWidthProperty().set(50);
             if(rezult > 0)
             {       a.setAlertType(Alert.AlertType.CONFIRMATION);
                 a.setContentText("Item adaugat cu succes.");
+                a.setGraphic(imageView);
                 a.show();
             }
             else
