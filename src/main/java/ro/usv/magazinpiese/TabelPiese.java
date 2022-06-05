@@ -40,6 +40,7 @@ public class TabelPiese implements Initializable {
         @FXML private TextField txtDenumire;
         @FXML private TextField txtMontare;
         @FXML private TextField txtMasini;
+        @FXML private Label lblCount;
         private String jdbcURL = "jdbc:oracle:thin:@80.96.123.131:1521:ora09";
         private Connection conn = null;
         private Statement stmt = null;
@@ -89,10 +90,18 @@ public class TabelPiese implements Initializable {
                                 piesa.setMarca(rs.getString("MARCA"));
                                 piesa.setParteMontare(rs.getString("PARTE_MONTARE").toString());
                                 piesa.setMasiniCompatibile(rs.getString("MASINI_COMPATIBILE"));
-                                piesa.setEnabled(true);
+                                boolean b= rs.getInt("activat")==1?true:false;
+                                piesa.setEnabled(b);
                                 piese.add(piesa);
                         }
                         //prelucrare rezultat
+                        sqlCommand = "select COUNT(PIESA_ID) as numar from PIESA_RC";
+                        //executie comanda SQL
+                        rs = stmt.executeQuery(sqlCommand);
+                        while(rs.next()){
+                        Integer i=rs.getInt("numar");
+                        lblCount.setText(i.toString()+" Înregistrări găsite");
+                        }
 
                 } catch(Exception e)
                 {        Alert a = new Alert(Alert.AlertType.ERROR);
@@ -113,9 +122,10 @@ public class TabelPiese implements Initializable {
 
                                 stmt = conn.createStatement();
 
-
-                                String sqlCommand = "insert into piesa_rc (piesa_id, denumire, marca, parte_montare,masini_compatibile) values( ";
-                                sqlCommand +="SECV_RC.NEXTVAL, '" + txtDenumire.getText() + "', '" +  txtMarca.getText()+ "', '" + txtMontare.getText() +"', '"+txtMasini.getText()+ "')";
+                                String name = txtDenumire.getText().substring(0,1).toUpperCase() + txtDenumire.getText().substring(1).toLowerCase();
+                                String montare=txtMontare.getText().substring(0,1).toUpperCase() + txtMontare.getText().substring(1).toLowerCase();
+                                String sqlCommand = "insert into piesa_rc (piesa_id, denumire, marca, parte_montare,masini_compatibile,activat) values( ";
+                                sqlCommand +="SECV_RC.NEXTVAL, '" + name + "', '" +  txtMarca.getText().toUpperCase()+ "', '" + montare +"', '"+txtMasini.getText().toUpperCase()+"'"+",1)";
                                 System.out.println(sqlCommand);
                                 int rezult = stmt.executeUpdate(sqlCommand);
 
@@ -175,7 +185,9 @@ public class TabelPiese implements Initializable {
                                 conn = DriverManager.getConnection(jdbcURL,user,passwd);
                                 Piesa p = tableView.getSelectionModel().getSelectedItem();
                                 String sqlCommand = "update piesa_rc ";
-                                sqlCommand+="SET denumire='"+txtDenumire.getText()+"', marca='"+txtMarca.getText()+"', parte_montare='"+txtMontare.getText()+"', masini_compatibile='"+txtMasini.getText()+"'";
+                                String name = txtDenumire.getText().substring(0,1).toUpperCase() + txtDenumire.getText().substring(1).toLowerCase();
+                                String montare=txtMontare.getText().substring(0,1).toUpperCase() + txtMontare.getText().substring(1).toLowerCase();
+                                sqlCommand+="SET denumire='"+name+"', marca='"+txtMarca.getText().toUpperCase()+"', parte_montare='"+montare+"', masini_compatibile='"+txtMasini.getText().toUpperCase()+"'";
                                 sqlCommand+=" where piesa_id="+p.getId();
                                 stmt = conn.createStatement();
                                 System.out.println(sqlCommand);
@@ -202,6 +214,12 @@ public class TabelPiese implements Initializable {
                                 Piesa piesa=tableView.getSelectionModel().getSelectedItem();
                                 piesa.setEnabled(!piesa.isEnabled());
                                 activated.setCellValueFactory(celldata->celldata.getValue().enabledProperty());
+
+                                conn = DriverManager.getConnection(jdbcURL,user,passwd);
+                                Integer integer=piesa.isEnabled()==true?1:0;
+                                String sqlCommand = "update piesa_rc set activat="+integer+" where piesa_id="+piesa.getId();
+                                stmt = conn.createStatement();
+                                int rezult = stmt.executeUpdate(sqlCommand);
                         }catch (Exception ex){
                                 Alert a = new Alert(Alert.AlertType.ERROR);
                                 a.setContentText(ex.getMessage());

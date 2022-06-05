@@ -54,6 +54,7 @@ public class TabelStoc implements Initializable {
     @FXML private TextField txtPret;
     @FXML private ComboBox cmbPiese;
     @FXML private ComboBox cmbDepo;
+    @FXML private Label lblCount;
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         piesaID.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -112,16 +113,16 @@ public class TabelStoc implements Initializable {
             conn = DriverManager.getConnection(jdbcURL,user,passwd);
 
             stmt = conn.createStatement();
-            String sqlCommand = "SELECT p.piesa_id, d.depozit_id, p.denumire, p.marca, p.masini_compatibile, s.bucati, s.pret, d.oras, d.judet\n" +
+            String sqlCommand = "SELECT p.piesa_id, d.depozit_id, p.denumire, p.marca, p.masini_compatibile, s.bucati, s.pret, d.oras, d.judet, p.activat\n" +
                     "FROM PIESA_RC p, DEPOZITE_RC d, STOC_3132A_RC s\n" +
                     "WHERE p.piesa_id=s.piesa_id AND d.depozit_id=s.depozit_id";
             //executie comanda SQL
             rs = stmt.executeQuery(sqlCommand);
             while(rs.next())
             {
-               Stoc stoc= new Stoc();
+                Stoc stoc = new Stoc();
 
-               stoc.setId(rs.getInt("piesa_id"));
+                stoc.setId(rs.getInt("piesa_id"));
                 stoc.setDenumire(rs.getString("denumire"));
                 stoc.setMarca(rs.getString("marca"));
                 stoc.setMasiniCompatibile(rs.getString("masini_compatibile"));
@@ -132,29 +133,31 @@ public class TabelStoc implements Initializable {
                 stoc.setDepoId(rs.getInt("depozit_id"));
 
 
-
                 stocuri.add(stoc);
+
             }
             sqlCommand="select * from piesa_rc";
             rs=stmt.executeQuery(sqlCommand);
 
             while(rs.next())
             {
+                if(rs.getInt("activat")==1) {
+                    ArrayList<String> arr = new ArrayList<>();
 
-                ArrayList<String> arr= new ArrayList<>();
+                    Piesa piesa = new Piesa();
+                    piesa.setDenumire(rs.getString("DENUMIRE"));
+                    piesa.setId(rs.getInt("PIESA_ID"));
+                    piesa.setData(rs.getDate("DATA_ADAUGARII").toString());
+                    piesa.setMarca(rs.getString("MARCA"));
+                    piesa.setParteMontare(rs.getString("PARTE_MONTARE").toString());
+                    piesa.setMasiniCompatibile(rs.getString("MASINI_COMPATIBILE"));
+                    String s = " " + piesa.getId() + " " + piesa.getDenumire() + " " + piesa.getMarca() + " ";
+                    arr.add(s);
+                    ObservableList<String> obs = FXCollections.observableArrayList(arr);
 
-                Piesa piesa= new Piesa();
-                piesa.setDenumire(rs.getString("DENUMIRE"));
-                piesa.setId(rs.getInt("PIESA_ID"));
-                piesa.setData(rs.getDate("DATA_ADAUGARII").toString());
-                piesa.setMarca(rs.getString("MARCA"));
-                piesa.setParteMontare(rs.getString("PARTE_MONTARE").toString());
-                piesa.setMasiniCompatibile(rs.getString("MASINI_COMPATIBILE"));
-                String s=" "+piesa.getId()+" "+piesa.getDenumire()+" "+piesa.getMarca()+" ";
-                arr.add(s);
-                ObservableList<String> obs=  FXCollections.observableArrayList(arr);
+                    cmbPiese.getItems().add(obs);
+                }
 
-                cmbPiese.getItems().add(obs);
             }
             //prelucrare rezultat
             sqlCommand="select * from depozite_rc";
@@ -162,21 +165,29 @@ public class TabelStoc implements Initializable {
 
             while(rs.next())
             {
+                if(rs.getInt("activat")==1) {
+                    ArrayList<String> arr = new ArrayList<>();
 
-                ArrayList<String> arr= new ArrayList<>();
+                    Depozit depozit = new Depozit();
+                    depozit.setOras(rs.getString("ORAS"));
+                    depozit.setId(rs.getInt("DEPOZIT_ID"));
+                    depozit.setJudet(rs.getString("JUDET"));
+                    depozit.setStrada(rs.getString("STRADA"));
+                    depozit.setNumar(rs.getInt("NUMAR"));
+                    depozit.setCodPostal(rs.getString("COD_POSTAL"));
+                    String s = " " + depozit.getId() + " " + depozit.getOras() + " " + depozit.getJudet() + " ";
+                    arr.add(s);
+                    ObservableList<String> obs = FXCollections.observableArrayList(arr);
 
-                Depozit depozit= new Depozit();
-                depozit.setOras(rs.getString("ORAS"));
-                depozit.setId(rs.getInt("DEPOZIT_ID"));
-                depozit.setJudet(rs.getString("JUDET"));
-                depozit.setStrada(rs.getString("STRADA"));
-                depozit.setNumar(rs.getInt("NUMAR"));
-                depozit.setCodPostal(rs.getString("COD_POSTAL"));
-                String s=" "+depozit.getId()+" "+depozit.getOras()+" "+depozit.getJudet()+" ";
-                arr.add(s);
-                ObservableList<String> obs=  FXCollections.observableArrayList(arr);
-
-                cmbDepo.getItems().add(obs);
+                    cmbDepo.getItems().add(obs);
+                }
+            }
+            sqlCommand = "select COUNT(*) as numar from stoc_3132a_rc";
+            //executie comanda SQL
+            rs = stmt.executeQuery(sqlCommand);
+            while(rs.next()){
+                Integer i=rs.getInt("numar");
+                lblCount.setText(i.toString()+" Înregistrări găsite ");
             }
 
         } catch(Exception e)

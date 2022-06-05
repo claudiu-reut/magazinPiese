@@ -10,6 +10,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import ro.usv.magazinpiese.Depozit;
@@ -37,6 +38,7 @@ public class TabelDepozit implements Initializable {
     @FXML private TableColumn<Depozit, String> Strada;
     @FXML private TableColumn<Depozit, Integer> Numar;
     @FXML private TableColumn<Depozit, String> codPostal;
+    @FXML private TableColumn<Depozit, Boolean> activated;
     private String jdbcURL = "jdbc:oracle:thin:@80.96.123.131:1521:ora09";
     private Connection conn = null;
     private Statement stmt = null;
@@ -45,6 +47,7 @@ public class TabelDepozit implements Initializable {
     @FXML private TextField txtStrada;
     @FXML private TextField txtNumar;
     @FXML private TextField txtCod;
+    @FXML private Label lblCount;
     ResultSet rs =null;
     String user ="hr" ;
     String passwd ="oracletest";
@@ -58,6 +61,8 @@ public class TabelDepozit implements Initializable {
         Numar.setCellValueFactory(new PropertyValueFactory<Depozit, Integer>("Numar"));
         codPostal.setCellValueFactory(new PropertyValueFactory<Depozit, String>("codPostal"));
         depozitTableView.getItems().setAll(parseDepoList());
+        activated.setCellFactory(CheckBoxTableCell.forTableColumn(activated));
+        activated.setCellValueFactory(celldata->celldata.getValue().enabledProperty());
         txtCod.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observableValue, String s, String s2) {
@@ -101,10 +106,18 @@ public class TabelDepozit implements Initializable {
                 depozit.setStrada(rs.getString("STRADA"));
                 depozit.setNumar(rs.getInt("NUMAR"));
                 depozit.setCodPostal(rs.getString("COD_POSTAL"));
-
+                boolean b= rs.getInt("activat")==1?true:false;
+                depozit.setEnabled(b);
                 depozite.add(depozit);
             }
             //prelucrare rezultat
+            sqlCommand = "select COUNT(depozit_id) as numar from depozite_RC";
+            //executie comanda SQL
+            rs = stmt.executeQuery(sqlCommand);
+            while(rs.next()){
+                Integer i=rs.getInt("numar");
+                lblCount.setText(i.toString()+" Înregistrări găsite ");
+            }
 
         } catch(Exception e)
         {        Alert a = new Alert(Alert.AlertType.ERROR);
@@ -139,6 +152,25 @@ public class TabelDepozit implements Initializable {
             a.setContentText(ex.getMessage());
             a.show();
             System.out.println(ex.getMessage());}
+    }
+    public void deactivateItem(ActionEvent e){
+        try{
+
+            Depozit depozit=depozitTableView.getSelectionModel().getSelectedItem();
+            depozit.setEnabled(!depozit.isEnabled());
+            activated.setCellValueFactory(celldata->celldata.getValue().enabledProperty());
+
+            conn = DriverManager.getConnection(jdbcURL,user,passwd);
+            Integer integer=depozit.isEnabled()==true?1:0;
+            String sqlCommand = "update depozite_rc set activat="+integer+" where depozit_id="+depozit.getId();
+            stmt = conn.createStatement();
+            int rezult = stmt.executeUpdate(sqlCommand);
+        }catch (Exception ex){
+            Alert a = new Alert(Alert.AlertType.ERROR);
+            a.setContentText(ex.getMessage());
+            a.show();
+            System.out.println(ex.getMessage());
+        }
     }
     public void saveItem(ActionEvent e){
         try{
@@ -193,7 +225,7 @@ public class TabelDepozit implements Initializable {
 
 
             String sqlCommand = "insert into DEPOZITE_RC values( ";
-            sqlCommand +="SECV_DEP_RC.NEXTVAL, '" + txtOras.getText() + "', '" +  txtJudet.getText()+ "', '" + txtStrada.getText() +"', "+txtNumar.getText()+",'"+txtCod.getText() +"')";
+            sqlCommand +="SECV_DEP_RC.NEXTVAL, '" + txtOras.getText() + "', '" +  txtJudet.getText().toUpperCase()+ "', '" + txtStrada.getText() +"', "+txtNumar.getText()+",'"+txtCod.getText() +"'"+",1)";
             System.out.println(sqlCommand);
             int rezult = stmt.executeUpdate(sqlCommand);
 

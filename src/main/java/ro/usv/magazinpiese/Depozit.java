@@ -1,5 +1,8 @@
 package ro.usv.magazinpiese;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+
 public class Depozit {
     private Integer id;
     private String oras;
@@ -7,6 +10,7 @@ public class Depozit {
     private String strada;
     private Integer numar;
     private String codPostal;
+    private BooleanProperty enabled=new SimpleBooleanProperty();;
 
     public Depozit(int id, String oras, String judet, String strada, Integer numar, String codPostal) {
         this.id = id;
@@ -23,6 +27,18 @@ public class Depozit {
         this.strada = "";
         this.numar = 0;
         this.codPostal = "";
+    }
+
+    public boolean isEnabled() {
+        return enabled.get();
+    }
+
+    public BooleanProperty enabledProperty() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled.set(enabled);
     }
 
     public int getId() {

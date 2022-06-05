@@ -4,10 +4,10 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="553.0" prefWidth="1022.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ro.usv.magazinpiese.TabelDepozit">
+<AnchorPane prefHeight="652.0" prefWidth="1118.0" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ro.usv.magazinpiese.TabelDepozit">
    <children>
       <Button layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#goBack" stylesheets="@application.css" text="Înapoi" />
-      <TableView fx:id="depozitTableView" layoutX="385.0" prefHeight="563.0" prefWidth="656.0" stylesheets="@application.css">
+      <TableView fx:id="depozitTableView" layoutX="359.0" prefHeight="652.0" prefWidth="759.0" stylesheets="@application.css">
         <columns>
           <TableColumn fx:id="DepozitId" prefWidth="64.0" text="ID" />
           <TableColumn fx:id="Oras" prefWidth="127.0" text="Oras" />
@@ -15,6 +15,7 @@
             <TableColumn fx:id="Strada" prefWidth="115.0" text="Strada" />
             <TableColumn fx:id="Numar" prefWidth="123.0" text="Numar" />
             <TableColumn fx:id="codPostal" prefWidth="101.0" text="Cod Postal" />
+            <TableColumn fx:id="activated" prefWidth="101.0" text="Activat" />
         </columns>
       </TableView>
       <TextField fx:id="txtOras" layoutX="56.0" layoutY="143.0" prefHeight="25.0" prefWidth="283.0" stylesheets="@application.css" />
@@ -60,5 +61,11 @@
       <Label layoutX="99.0" layoutY="177.0" prefHeight="17.0" prefWidth="6.0" text="*" textFill="RED" />
       <Label layoutX="137.0" layoutY="350.0" prefHeight="17.0" prefWidth="6.0" text="*" textFill="RED" />
       <Label layoutX="299.0" layoutY="359.0" text="(6 cifre)" />
+      <Button layoutX="62.0" layoutY="538.0" mnemonicParsing="false" onAction="#deactivateItem" prefHeight="46.0" prefWidth="249.0" stylesheets="@application.css" text="Activează/Dezactivează" />
+      <Label fx:id="lblCount" layoutX="68.0" layoutY="595.0" text="Label">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>

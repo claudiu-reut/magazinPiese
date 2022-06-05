@@ -47,5 +47,15 @@
       <Button layoutX="185.0" layoutY="419.0" mnemonicParsing="false" onAction="#deleteSelected" prefHeight="46.0" prefWidth="105.0" stylesheets="@application.css" text="Șterge" />
       <Button layoutX="29.0" layoutY="498.0" mnemonicParsing="false" onAction="#selectedItem" prefHeight="46.0" prefWidth="105.0" stylesheets="@application.css" text="Editează" />
       <Button layoutX="185.0" layoutY="498.0" mnemonicParsing="false" onAction="#saveItem" prefHeight="46.0" prefWidth="105.0" stylesheets="@application.css" text="Salvează" />
+      <Label fx:id="lblCount" layoutX="33.0" layoutY="593.0" text="Label">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <Label layoutX="28.0" layoutY="92.0" text="Actualizare catalog">
+         <font>
+            <Font name="System Bold" size="21.0" />
+         </font>
+      </Label>
    </children>
 </AnchorPane>
